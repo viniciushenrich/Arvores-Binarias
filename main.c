@@ -1,47 +1,91 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "produto.h"
 
 int main() {
     NoID *raizID = NULL;
     NoPreco *raizPreco = NULL;
 
-    Produto *p1 = criarProduto (50, "Mouse", 100);
-    Produto *p2 = criarProduto (30, "Teclado", 300);
-    Produto *p3 = criarProduto (10, "Pneu", 800);
+    int opcao, id;
+    char nome[50];
+    float preco, min, max;
+    Produto *p;
 
-    inserirProduto (&raizID, &raizPreco, p1);
-    inserirProduto (&raizID, &raizPreco, p2);
-    inserirProduto (&raizID, &raizPreco, p3);
+    do {
+        printf("\n======= SISTEMA DE PRODUTOS (ESTRUTURA DE ARVORES) =======\n");
+        printf("1. Inserir Produto\n");
+        printf("2. Buscar Produto por ID\n");
+        printf("3. Buscar Produtos por Faixa de Preco\n");
+        printf("4. Buscar Preco Mais Proximo\n");
+        printf("5. Remover Produto\n");
+        printf("0. Sair\n");
+        printf("=============================================================\n");
+        printf("Escolha uma opcao: ");
+        scanf("%d", &opcao);
 
-    printf("Funcionando!\n");
+        switch(opcao) {
+            case 1:
+                printf("\n Cadastro de Produto \n");
+                printf("Digite o ID, Nome (sem espacos) e Preco: ");
+                // Usando a leitura em uma linha como voce queria
+                if (scanf("%d %s %f", &id, nome, &preco) == 3) {
+                    p = criarProduto(id, nome, preco);
+                    inserirProduto(&raizID, &raizPreco, p);
+                    printf("Sucesso: Produto cadastrado!\n");
+                } else {
+                    printf("Erro: Formato de entrada invalido.\n");
+                }
+                break;
 
-    Produto *res = buscarID(raizID, 50);
+            case 2:
+                printf("\n Busca por ID \n");
+                printf("Digite o ID desejado: ");
+                scanf("%d", &id);
+                p = buscarID(raizID, id);
+                if (p != NULL) {
+                    printf("Encontrado: [ID: %d] Nome: %s | Preco: R$%.2f\n", p->id, p->nome, p->preco);
+                } else {
+                    printf("Aviso: Produto com ID %d nao encontrado.\n", id);
+                }
+                break;
 
-    if (res != NULL) {
-        printf("Encontrado: %s - %.2f\n", res->nome, res->preco);
-    } else {
-        printf("Produto nao encontrado\n");
-    }
+            case 3:
+                printf("\n Busca por Faixa de Preco \n");
+                printf("Digite o preço MINÍMO e o MÁXIMO: ");
+                scanf("%f %f", &min, &max);
+                printf("Produtos na faixa de R$%.2f ate R$%.2f:\n", min, max);
+                buscarFaixa(raizPreco, min, max);
+                break;
 
-    printf("\nProdutos entre 100 e 500:\n");
-    buscarFaixa(raizPreco, 100, 500);
+            case 4:
+                printf("\n Buscar Preco Mais Proximo \n");
+                printf("Digite um valor de referencia: ");
+                scanf("%f", &preco);
+                p = buscarPrecoMaisProximo(raizPreco, preco);
+                if (p != NULL) {
+                    printf("O produto com preço mais proximo de R$%.2f e:\n", preco);
+                    printf("-> %s (R$%.2f)\n", p->nome, p->preco);
+                } else {
+                    printf("Aviso: Não há produtos cadastrados.\n");
+                }
+                break;
 
-    printf("\nMais proximo de 250:\n");
+            case 5:
+                printf("\n--- Remover Produto ---\n");
+                printf("Digite o ID do produto a ser removido: ");
+                scanf("%d", &id);
+                // A funcao removerProduto ja faz a busca e a remocao sincronizada
+                removerProduto(&raizID, &raizPreco, id);
+                break;
 
-    Produto *prox = buscarMaisProximo(raizPreco, 250);
+            case 0:
+                printf("Encerrando o sistema... Até logo!\n");
+                break;
 
-    if (prox != NULL) {
-        printf("ID: %d | Nome: %s | Preco: %.2f\n",
-               prox->id, prox->nome, prox->preco);
-    }
-
-    // Liberar memória alocada
-    liberarArvoreID(raizID);
-    liberarArvorePreco(raizPreco);
-
-    free(p1);
-    free(p2);
-    free(p3);
+            default:
+                printf("Opçao invalida! Tente novamente.\n");
+        }
+    } while(opcao != 0);
 
     return 0;
 }
