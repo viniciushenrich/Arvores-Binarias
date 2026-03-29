@@ -98,7 +98,7 @@ void buscarFaixa(NoPreco *raiz, float min, float max) {
     }
 }
 
-Produto* buscarMaisProximo(NoPreco *raiz, float valor) {
+Produto* buscarPrecoMaisProximo(NoPreco *raiz, float valor) {
     if (raiz == NULL) return NULL;
 
     Produto *maisProx = raiz->produto;
@@ -117,24 +117,115 @@ Produto* buscarMaisProximo(NoPreco *raiz, float valor) {
         } else if (valor > raiz->produto->preco) {
             raiz = raiz->dir;
         } else {
-            // achou exatamente igual
+
             return raiz->produto;
         }
     }
 
     return maisProx;
+
+
 }
 
-void liberarArvoreID(NoID *raiz) {
-    if (raiz == NULL) return;
-    liberarArvoreID(raiz->esq);
-    liberarArvoreID(raiz->dir);
-    free(raiz);
+NoID* menorNoID(NoID* atual) {
+    NoID* temp = atual;
+    while (temp != NULL && temp->esq != NULL) {
+        temp = temp->esq;
+    }
+    return temp;
 }
 
-void liberarArvorePreco(NoPreco *raiz) {
-    if (raiz == NULL) return;
-    liberarArvorePreco(raiz->esq);
-    liberarArvorePreco(raiz->dir);
-    free(raiz);
+NoID* removerID(NoID *raiz, int id) {
+    if (raiz == NULL) return raiz;
+
+
+    if (id < raiz->produto->id) {
+        raiz->esq = removerID(raiz->esq, id);
+    } else if (id > raiz->produto->id) {
+        raiz->dir = removerID(raiz->dir, id);
+    }
+
+    else {
+        if (raiz->esq == NULL) {
+            NoID *temp = raiz->dir;
+            free(raiz);
+            return temp;
+        } else if (raiz->dir == NULL) {
+            NoID *temp = raiz->esq;
+            free(raiz);
+            return temp;
+        }
+
+        NoID *temp = menorNoID(raiz->dir);
+
+        raiz->produto = temp->produto;
+
+        raiz->dir = removerID(raiz->dir, temp->produto->id);
+    }
+    return raiz;
+}
+
+NoPreco* menorNoPreco(NoPreco* atual) {
+    NoPreco* temp = atual;
+
+    while (temp != NULL && temp->esq != NULL) {
+        temp = temp->esq;
+    }
+    return temp;
+}
+
+NoPreco* removerPreco(NoPreco *raiz, float preco, int id) {
+    if (raiz == NULL) return raiz;
+
+    if (preco < raiz->produto->preco) {
+        raiz->esq = removerPreco(raiz->esq, preco, id);
+    }
+    else if (preco > raiz->produto->preco) {
+        raiz->dir = removerPreco(raiz->dir, preco, id);
+    }
+
+    else {
+        if (raiz->produto->id != id) {
+            raiz->dir = removerPreco(raiz->dir, preco, id);
+            return raiz;
+        }
+
+        if (raiz->esq == NULL) {
+            NoPreco *temp = raiz->dir;
+            free(raiz);
+            return temp;
+        } else if (raiz->dir == NULL) {
+            NoPreco *temp = raiz->esq;
+            free(raiz);
+            return temp;
+        }
+
+        NoPreco *temp = menorNoPreco(raiz->dir);
+
+        raiz->produto = temp->produto;
+
+        raiz->dir = removerPreco(raiz->dir, temp->produto->preco, temp->produto->id);
+    }
+
+    return raiz;
+}
+
+//Sincroniza as duas remoções
+void removerProduto(NoID **raizID, NoPreco **raizPreco, int id) {
+    Produto *p = buscarID(*raizID, id);
+
+    if (p == NULL) {
+        printf("Erro: Produto com ID %d nao encontrado.\n", id);
+        return;
+    }
+
+    float precoRemover = p->preco;
+
+    *raizID = removerID(*raizID, id);
+
+    *raizPreco = removerPreco(*raizPreco, precoRemover, id);
+
+    free(p);
+
+    printf("Produto ID %d removido com sucesso das duas arvores!\n", id);
 }
