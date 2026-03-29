@@ -1,0 +1,14 @@
+[
+{
+  "directory": "C:/Faculdade/Terceiro Semestre/Programao com Estruturas Avancadas/tpe 1/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.3\\bin\\mingw\\bin\\gcc.exe -g -std=gnu11 -fdiagnostics-color=always -o CMakeFiles\\arvoresBinarias.dir\\main.c.obj -c \"C:\\Faculdade\\Terceiro Semestre\\Programao com Estruturas Avancadas\\tpe 1\\main.c\"",
+  "file": "C:/Faculdade/Terceiro Semestre/Programao com Estruturas Avancadas/tpe 1/main.c",
+  "output": "C:/Faculdade/Terceiro Semestre/Programao com Estruturas Avancadas/tpe 1/cmake-build-debug/CMakeFiles/arvoresBinarias.dir/main.c.obj"
+},
+{
+  "directory": "C:/Faculdade/Terceiro Semestre/Programao com Estruturas Avancadas/tpe 1/cmake-build-debug",
+  "command": "C:\\PROGRA~1\\JETBRA~1\\CLION2~1.3\\bin\\mingw\\bin\\gcc.exe -g -std=gnu11 -fdiagnostics-color=always -o CMakeFiles\\arvoresBinarias.dir\\produto.c.obj -c \"C:\\Faculdade\\Terceiro Semestre\\Programao com Estruturas Avancadas\\tpe 1\\produto.c\"",
+  "file": "C:/Faculdade/Terceiro Semestre/Programao com Estruturas Avancadas/tpe 1/produto.c",
+  "output": "C:/Faculdade/Terceiro Semestre/Programao com Estruturas Avancadas/tpe 1/cmake-build-debug/CMakeFiles/arvoresBinarias.dir/produto.c.obj"
+}
+]
