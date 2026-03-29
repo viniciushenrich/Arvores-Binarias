@@ -23,14 +23,18 @@ typedef struct NoPreco {
 // Funções
 Produto* criarProduto (int id, char nome[], float preco);
 Produto* buscarID(NoID *raiz, int id);
-Produto* buscarMaisProximo(NoPreco *raiz, float valor);
+Produto* buscarPrecoMaisProximo(NoPreco *raiz, float valor);
 
+NoID* menorNoID(NoID* atual);
+NoID* removerID(NoID *raiz, int id);
 NoID* inserirID (NoID *raiz, Produto *p);
+
+NoPreco* menorNoPreco(NoPreco* atual);
+NoPreco* removerPreco(NoPreco *raiz, float preco, int id);
 NoPreco* inserirPreco (NoPreco *raiz, Produto *p);
 
 void inserirProduto (NoID **raizID, NoPreco **raizPreco, Produto *p);
 void buscarFaixa(NoPreco *raiz, float min, float max);
-void liberarArvoreID(NoID *raiz);
-void liberarArvorePreco(NoPreco *raiz);
+void removerProduto(NoID **raizID, NoPreco **raizPreco, int id);
 
 #endif
