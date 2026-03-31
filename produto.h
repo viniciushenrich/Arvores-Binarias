@@ -11,6 +11,7 @@ typedef struct NoID {
     Produto *produto;
     struct NoID *esq;
     struct NoID *dir;
+    int altura;
 }NoID;
 
 typedef struct NoPreco {
