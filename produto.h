@@ -37,4 +37,7 @@ void inserirProduto (NoID **raizID, NoPreco **raizPreco, Produto *p);
 void buscarFaixa(NoPreco *raiz, float min, float max);
 void removerProduto(NoID **raizID, NoPreco **raizPreco, int id);
 
+void imprimirArvoreID(NoID *raiz);
+void imprimirArvorePreco(NoPreco *raiz);
+
 #endif

@@ -229,3 +229,47 @@ void removerProduto(NoID **raizID, NoPreco **raizPreco, int id) {
 
     printf("Produto ID %d removido com sucesso das duas arvores!\n", id);
 }
+
+void imprimirArvoreID(NoID *raiz) {
+    if (raiz != NULL) {
+        printf("(ID:%d | Nome:%s | Preco:%.2f | ",
+               raiz->produto->id,
+               raiz->produto->nome,
+               raiz->produto->preco);
+
+        if (raiz->esq != NULL)
+            printf("esq:%d | ", raiz->esq->produto->id);
+        else
+            printf("esq:NULL | ");
+
+        if (raiz->dir != NULL)
+            printf("dir:%d)\n", raiz->dir->produto->id);
+        else
+            printf("dir:NULL)\n");
+
+        imprimirArvoreID(raiz->esq);
+        imprimirArvoreID(raiz->dir);
+    }
+}
+
+void imprimirArvorePreco(NoPreco *raiz) {
+    if (raiz != NULL) {
+        printf("(Preco:%.2f | Nome:%s | ID:%d | ",
+               raiz->produto->preco,
+               raiz->produto->nome,
+               raiz->produto->id);
+
+        if (raiz->esq != NULL)
+            printf("esq:%.2f | ", raiz->esq->produto->preco);
+        else
+            printf("esq:NULL | ");
+
+        if (raiz->dir != NULL)
+            printf("dir:%.2f)\n", raiz->dir->produto->preco);
+        else
+            printf("dir:NULL)\n");
+
+        imprimirArvorePreco(raiz->esq);
+        imprimirArvorePreco(raiz->dir);
+    }
+}

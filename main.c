@@ -18,6 +18,7 @@ int main() {
         printf("3. Buscar Produtos por Faixa de Preco\n");
         printf("4. Buscar Preco Mais Proximo\n");
         printf("5. Remover Produto\n");
+        printf("6. Imprimir Arvores\n");
         printf("0. Sair\n");
         printf("=============================================================\n");
         printf("Escolha uma opcao: ");
@@ -76,6 +77,24 @@ int main() {
                 scanf("%d", &id);
                 // A funcao removerProduto ja faz a busca e a remocao sincronizada
                 removerProduto(&raizID, &raizPreco, id);
+                break;
+            
+            case 6:
+                printf("\n--- IMPRESSAO DAS ARVORES ---\n");
+
+                printf("\nArvore por ID:\n");
+                if (raizID == NULL) {
+                    printf("Arvore vazia!\n");
+                } else{
+                    imprimirArvoreID(raizID);
+                    printf("\nArvore por Preco:\n");
+                }
+                if (raizPreco == NULL){
+                    printf("Arvore vazia!\n");
+                } else{
+                    imprimirArvorePreco(raizPreco);
+                }
+
                 break;
 
             case 0:
