@@ -104,23 +104,6 @@ NoID* inserirID(NoID *raiz, Produto *p) {
     return raiz;
 }
 
-NoPreco* inserirPreco(NoPreco *raiz, Produto *p) {
-    if (raiz == NULL) {
-        NoPreco *novo = (NoPreco*) malloc(sizeof(NoPreco));
-        novo->produto = p;
-        novo->esq = novo->dir = NULL;
-        return novo;
-    }
-
-    if (p->preco < raiz->produto->preco) {
-        raiz->esq = inserirPreco(raiz->esq, p);
-    } else {
-        raiz->dir = inserirPreco(raiz->dir, p);
-    }
-
-    return raiz;
-}
-
 Produto* buscarID(NoID *raiz, int id) {
     if (raiz == NULL) return NULL;
 
@@ -274,42 +257,6 @@ NoPreco* menorNoPreco(NoPreco* atual) {
     return temp;
 }
 
-NoPreco* removerPreco(NoPreco *raiz, float preco, int id) {
-    if (raiz == NULL) return raiz;
-
-    if (preco < raiz->produto->preco) {
-        raiz->esq = removerPreco(raiz->esq, preco, id);
-    }
-    else if (preco > raiz->produto->preco) {
-        raiz->dir = removerPreco(raiz->dir, preco, id);
-    }
-
-    else {
-        if (raiz->produto->id != id) {
-            raiz->dir = removerPreco(raiz->dir, preco, id);
-            return raiz;
-        }
-
-        if (raiz->esq == NULL) {
-            NoPreco *temp = raiz->dir;
-            free(raiz);
-            return temp;
-        } else if (raiz->dir == NULL) {
-            NoPreco *temp = raiz->esq;
-            free(raiz);
-            return temp;
-        }
-
-        NoPreco *temp = menorNoPreco(raiz->dir);
-
-        raiz->produto = temp->produto;
-
-        raiz->dir = removerPreco(raiz->dir, temp->produto->preco, temp->produto->id);
-    }
-
-    return raiz;
-}
-
 //Sincroniza as duas remoções
 void removerProduto(NoID **raizID, NoPreco **raizPreco, int id) {
     Produto *p = buscarID(*raizID, id);
@@ -370,4 +317,136 @@ void imprimirArvorePreco(NoPreco *raiz) {
         imprimirArvorePreco(raiz->esq);
         imprimirArvorePreco(raiz->dir);
     }
+
+
+}
+
+int alturaPreco(NoPreco *n) {
+    if (n == NULL) return 0;
+    return n->altura;
+}
+
+int fatorBalanceamentoPreco(NoPreco *n) {
+    if (n == NULL) return 0;
+    return alturaPreco(n->esq) - alturaPreco(n->dir);
+}
+
+NoPreco* rotacaoDireitaPreco(NoPreco *y) {
+    NoPreco *x = y->esq;
+    NoPreco *T2 = x->dir;
+
+    x->dir = y;
+    y->esq = T2;
+
+    y->altura = max(alturaPreco(y->esq), alturaPreco(y->dir)) + 1;
+    x->altura = max(alturaPreco(x->esq), alturaPreco(x->dir)) + 1;
+
+    return x;
+}
+
+NoPreco* rotacaoEsquerdaPreco(NoPreco *x) {
+    NoPreco *y = x->dir;
+    NoPreco *T2 = y->esq;
+
+    y->esq = x;
+    x->dir = T2;
+
+    x->altura = max(alturaPreco(x->esq), alturaPreco(x->dir)) + 1;
+    y->altura = max(alturaPreco(y->esq), alturaPreco(y->dir)) + 1;
+
+    return y;
+}
+
+NoPreco* inserirPreco(NoPreco *raiz, Produto *p) {
+    if (raiz == NULL) {
+        NoPreco *novo = (NoPreco*) malloc(sizeof(NoPreco));
+        novo->produto = p;
+        novo->esq = novo->dir = NULL;
+        novo->altura = 1;
+        return novo;
+    }
+
+    if (p->preco < raiz->produto->preco) {
+        raiz->esq = inserirPreco(raiz->esq, p);
+    } else {
+        raiz->dir = inserirPreco(raiz->dir, p);
+    }
+
+    raiz->altura = 1 + max(alturaPreco(raiz->esq), alturaPreco(raiz->dir));
+
+    int fb = fatorBalanceamentoPreco(raiz);
+
+    if (fb > 1 && p->preco < raiz->esq->produto->preco)
+        return rotacaoDireitaPreco(raiz);
+
+    if (fb > 1 && p->preco >= raiz->esq->produto->preco) {
+        raiz->esq = rotacaoEsquerdaPreco(raiz->esq);
+        return rotacaoDireitaPreco(raiz);
+    }
+
+    if (fb < -1 && p->preco >= raiz->dir->produto->preco)
+        return rotacaoEsquerdaPreco(raiz);
+
+    if (fb < -1 && p->preco < raiz->dir->produto->preco) {
+        raiz->dir = rotacaoDireitaPreco(raiz->dir);
+        return rotacaoEsquerdaPreco(raiz);
+    }
+
+    return raiz;
+}
+
+NoPreco* removerPreco(NoPreco *raiz, float preco, int id) {
+    if (raiz == NULL) return raiz;
+    
+    if (preco < raiz->produto->preco) {
+        raiz->esq = removerPreco(raiz->esq, preco, id);
+    }
+    else if (preco > raiz->produto->preco) {
+        raiz->dir = removerPreco(raiz->dir, preco, id);
+    }
+    else {
+
+        if (raiz->produto->id != id) {
+            raiz->dir = removerPreco(raiz->dir, preco, id);
+        }
+        else {
+            if (raiz->esq == NULL) {
+                NoPreco *temp = raiz->dir;
+                free(raiz);
+                return temp;
+            } else if (raiz->dir == NULL) {
+                NoPreco *temp = raiz->esq;
+                free(raiz);
+                return temp;
+            }
+
+            NoPreco *temp = menorNoPreco(raiz->dir);
+            raiz->produto = temp->produto;
+            raiz->dir = removerPreco(raiz->dir, temp->produto->preco, temp->produto->id);
+        }
+    }
+
+    if (raiz == NULL) return raiz;
+
+    raiz->altura = 1 + max(alturaPreco(raiz->esq), alturaPreco(raiz->dir));
+
+    int fb = fatorBalanceamentoPreco(raiz);
+
+    if (fb > 1 && fatorBalanceamentoPreco(raiz->esq) >= 0)
+        return rotacaoDireitaPreco(raiz);
+
+    if (fb > 1 && fatorBalanceamentoPreco(raiz->esq) < 0) {
+        raiz->esq = rotacaoEsquerdaPreco(raiz->esq);
+        return rotacaoDireitaPreco(raiz);
+    }
+
+    if (fb < -1 && fatorBalanceamentoPreco(raiz->dir) <= 0)
+        return rotacaoEsquerdaPreco(raiz);
+
+    if (fb < -1 && fatorBalanceamentoPreco(raiz->dir) > 0) {
+        raiz->dir = rotacaoDireitaPreco(raiz->dir);
+        return rotacaoEsquerdaPreco(raiz);
+    }
+
+    return raiz;
 }
